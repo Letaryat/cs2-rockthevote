@@ -2,7 +2,6 @@
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Menu;
-
 namespace cs2_rockthevote
 {
     public partial class Plugin
@@ -29,14 +28,15 @@ namespace cs2_rockthevote
         private PluginState _pluginState;
         private MapLister _mapLister;
 
+        
         public string? NextMap { get; private set; } = null;
         private string _prefix = DEFAULT_PREFIX;
         private const string DEFAULT_PREFIX = "rtv.prefix";
         private bool _mapEnd = false;
-
+        public string? fileName = null;
         private Map[] _maps = new Map[0];
         private Config _config;
-
+        public CounterStrikeSharp.API.Modules.Timers.Timer? reservedTimer = null;
         public ChangeMapManager(StringLocalizer localizer, PluginState pluginState, MapLister mapLister)
         {
             _localizer = localizer;
@@ -61,6 +61,8 @@ namespace cs2_rockthevote
 
         public void OnMapStart(string _map)
         {
+            fileName = $"auto-{DateTime.Now:yyyyMMdd-HHmm}-{_map}";
+            Server.NextWorldUpdate(() => Server.ExecuteCommand($"tv_record \"replays/{fileName}.dem\""));
             NextMap = null;
             _prefix = DEFAULT_PREFIX;
         }
@@ -80,14 +82,25 @@ namespace cs2_rockthevote
                 Map map = _maps.FirstOrDefault(x => x.Name == NextMap!)!;
                 if (Server.IsMapValid(map.Name))
                 {
-                    Server.ExecuteCommand($"changelevel {map.Name}");
+                    Server.ExecuteCommand("tv_stoprecord");
+                    _plugin.AddTimer(1.0F, () =>{
+                        Server.ExecuteCommand($"changelevel {map.Name}");
+                    });
                 }
                 else if (map.Id is not null)
                 {
-                    Server.ExecuteCommand($"host_workshop_map {map.Id}");
+                    Server.ExecuteCommand("tv_stoprecord");
+                    _plugin.AddTimer(1.0F, () =>{
+                        Server.ExecuteCommand($"host_workshop_map {map.Id}");                        
+                    });
+
                 }
                 else
-                    Server.ExecuteCommand($"ds_workshop_changelevel {map.Name}");
+                    Server.ExecuteCommand("tv_stoprecord");
+                    _plugin.AddTimer(1.0F, () =>{
+                        Server.ExecuteCommand($"ds_workshop_changelevel {map.Name}");
+                    });
+
             });
             return true;
         }
@@ -115,6 +128,12 @@ namespace cs2_rockthevote
                 }
                 return HookResult.Continue;
             });
+            /*
+            fileName = $"{fileName}-{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
+            Server.PrintToConsole("CHUJEC NIE WIEM ZOBACZ");
+            Server.NextWorldUpdate(() => Server.ExecuteCommand($"tv_record \"replays/{fileName}.dem\""));
+            */
+            //Server.ExecuteCommand($"tv_record \"discord_demos/{(fileName.EndsWith(".dem") ? fileName : $"{fileName}.dem")}\"");
         }
     }
 }
