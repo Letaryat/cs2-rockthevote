@@ -61,7 +61,7 @@ namespace cs2_rockthevote
 
         public void OnMapStart(string _map)
         {
-            fileName = $"auto-{DateTime.Now:yyyyMMdd-HHmm}-{_map}";
+            fileName = $"auto-{DateTime.Now:yyyyMMdd-HHmm}-{_map}-CS2_____Arena_1v1_____Pierdolnik.eu___1shot1kill.pl";
             Server.NextWorldUpdate(() => Server.ExecuteCommand($"tv_record \"replays/{fileName}.dem\""));
             NextMap = null;
             _prefix = DEFAULT_PREFIX;
@@ -128,12 +128,6 @@ namespace cs2_rockthevote
                 }
                 return HookResult.Continue;
             });
-            /*
-            fileName = $"{fileName}-{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
-            Server.PrintToConsole("CHUJEC NIE WIEM ZOBACZ");
-            Server.NextWorldUpdate(() => Server.ExecuteCommand($"tv_record \"replays/{fileName}.dem\""));
-            */
-            //Server.ExecuteCommand($"tv_record \"discord_demos/{(fileName.EndsWith(".dem") ? fileName : $"{fileName}.dem")}\"");
         }
     }
 }
