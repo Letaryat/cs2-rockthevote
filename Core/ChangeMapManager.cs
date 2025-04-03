@@ -61,8 +61,7 @@ namespace cs2_rockthevote
 
         public void OnMapStart(string _map)
         {
-            fileName = $"auto-{DateTime.Now:yyyyMMdd-HHmm}-{_map}-CS2_____Arena_1v1_____Pierdolnik.eu___1shot1kill.pl";
-            Server.NextWorldUpdate(() => Server.ExecuteCommand($"tv_record \"replays/{fileName}.dem\""));
+
             NextMap = null;
             _prefix = DEFAULT_PREFIX;
         }
@@ -82,21 +81,21 @@ namespace cs2_rockthevote
                 Map map = _maps.FirstOrDefault(x => x.Name == NextMap!)!;
                 if (Server.IsMapValid(map.Name))
                 {
-                    Server.ExecuteCommand("tv_stoprecord");
+
                     _plugin.AddTimer(1.0F, () =>{
                         Server.ExecuteCommand($"changelevel {map.Name}");
                     });
                 }
                 else if (map.Id is not null)
                 {
-                    Server.ExecuteCommand("tv_stoprecord");
+
                     _plugin.AddTimer(1.0F, () =>{
                         Server.ExecuteCommand($"host_workshop_map {map.Id}");                        
                     });
 
                 }
                 else
-                    Server.ExecuteCommand("tv_stoprecord");
+   
                     _plugin.AddTimer(1.0F, () =>{
                         Server.ExecuteCommand($"ds_workshop_changelevel {map.Name}");
                     });
