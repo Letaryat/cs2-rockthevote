@@ -6,6 +6,7 @@ using cs2_rockthevote.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using Microsoft.Extensions.DependencyInjection;
 using Timer = CounterStrikeSharp.API.Modules.Timers.Timer;
+using Microsoft.Extensions.Logging;
 
 namespace cs2_rockthevote
 {
@@ -17,16 +18,18 @@ namespace cs2_rockthevote
         private PluginState _pluginState;
         private GameRules _gameRules;
         private EndMapVoteManager _voteManager;
+
+        private ChangeMapManager _changeMapManager;
         private EndOfMapConfig _config = new();
         private Timer? _timer;
         private bool deathMatch => _gameMode?.GetPrimitiveValue<int>() == 2 && _gameType?.GetPrimitiveValue<int>() == 1;
         private ConVar? _gameType;
         private ConVar? _gameMode;
-
         private MapLister _mapLister;
 
+
         // overload for multilang support
-        public EndOfMapVote(StringLocalizer localizer, TimeLimitManager timeLimit, MaxRoundsManager maxRounds, PluginState pluginState, GameRules gameRules, EndMapVoteManager voteManager, MapLister mapLister)
+        public EndOfMapVote(StringLocalizer localizer, TimeLimitManager timeLimit, MaxRoundsManager maxRounds, PluginState pluginState, GameRules gameRules, EndMapVoteManager voteManager, MapLister mapLister, ChangeMapManager changeMapManager)
         {
             _localizer = localizer;
             _timeLimit = timeLimit;
@@ -35,8 +38,9 @@ namespace cs2_rockthevote
             _gameRules = gameRules;
             _voteManager = voteManager;
             _mapLister = mapLister;
+            _changeMapManager = changeMapManager;
         }
-        public EndOfMapVote(TimeLimitManager timeLimit, MaxRoundsManager maxRounds, PluginState pluginState, GameRules gameRules, EndMapVoteManager voteManager, MapLister mapLister)
+        public EndOfMapVote(TimeLimitManager timeLimit, MaxRoundsManager maxRounds, PluginState pluginState, GameRules gameRules, EndMapVoteManager voteManager, MapLister mapLister, ChangeMapManager changeMapManager)
         {
             //_localizer = new StringLocalizer();
             _timeLimit = timeLimit;
@@ -45,6 +49,7 @@ namespace cs2_rockthevote
             _gameRules = gameRules;
             _voteManager = voteManager;
             _mapLister = mapLister;
+            _changeMapManager = changeMapManager;
         }
 
         bool CheckMaxRounds()
@@ -131,8 +136,6 @@ namespace cs2_rockthevote
                 MaybeStartTimer();
                 return HookResult.Continue;
             });
-<<<<<<< Updated upstream
-=======
 
             plugin.RegisterEventHandler<EventCsWinPanelMatch>((ev, info) =>
             {
@@ -141,26 +144,36 @@ namespace cs2_rockthevote
 #endif
                 _voteManager.timeLeft = -1; // This ends if voting is still going.
 
-#if DEBUG
-                plugin?.Logger.LogInformation("Checking if it is a workshop map not from collection");
-#endif
 
                 plugin?.AddTimer(1.0f, () =>
                 {
                     Map mapInfo = _mapLister.Maps!.FirstOrDefault(x => x.Name == _voteManager.winner.Key!)!;
-                    if (mapInfo.Id is not null)
+                    if (_config.ForceChangeOnWinPanelMatch)
                     {
 #if DEBUG
-                        plugin?.Logger.LogInformation("Map not from collection. Executing host_workshop_map before being brokey!");
+                        plugin?.Logger.LogInformation("ForceChangeOnWinPanelMatch = True. Changing map.");
 #endif
-                        Server.ExecuteCommand($"host_workshop_map {mapInfo.Id}");
+                        _changeMapManager.ChangeNextMap();
+                    }
+                    else
+                    {
+#if DEBUG
+                        plugin?.Logger.LogInformation("Checking if it is a workshop map not from collection");
+#endif
+
+                        if (mapInfo.Id is not null)
+                        {
+#if DEBUG
+                            plugin?.Logger.LogInformation("Map not from collection. Executing host_workshop_map before being brokey!");
+#endif
+                            Server.ExecuteCommand($"host_workshop_map {mapInfo.Id}");
+                        }
                     }
                 });
                 return HookResult.Continue;
             }, HookMode.Pre);
 
 
->>>>>>> Stashed changes
         }
 
         public void OnConfigParsed(Config config)

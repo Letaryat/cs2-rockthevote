@@ -59,7 +59,7 @@ namespace cs2_rockthevote
 
         Dictionary<string, int> Votes = new();
         Dictionary<CCSPlayerController, string> PlayerVotes = new();
-        int timeLeft = -1;
+        public int timeLeft = -1;
 
         List<string> mapsEllected = new();
 
@@ -74,10 +74,7 @@ namespace cs2_rockthevote
 
         public bool VoteInProgress => timeLeft >= 0;
 
-<<<<<<< Updated upstream
-=======
         public KeyValuePair<string, int> winner;
->>>>>>> Stashed changes
         public void OnLoad(Plugin plugin)
         {
             _plugin = plugin;
@@ -350,9 +347,6 @@ namespace cs2_rockthevote
                 _pluginState.EofVoteHappening = false;
 #if DEBUG
                 _plugin?.Logger.LogInformation("EndVote: Reset EofVoteHappening to false in finally block");
-<<<<<<< Updated upstream
-#endif
-=======
                 _plugin?.Logger.LogInformation($"Additionaly setting nextlevel to winner: {winner.Key} | {winner.Value}");
 #endif
                 if (_plugin!.Config.EndOfMapVote.PauseMatchWhenVote)
@@ -360,7 +354,6 @@ namespace cs2_rockthevote
                     Server.ExecuteCommand("mp_unpause_match");
                 }
                 Server.ExecuteCommand($"nextlevel {winner.Key}");
->>>>>>> Stashed changes
             }
         }
 
