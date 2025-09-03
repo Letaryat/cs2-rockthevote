@@ -23,8 +23,10 @@ namespace cs2_rockthevote
         private ConVar? _gameType;
         private ConVar? _gameMode;
 
+        private MapLister _mapLister;
+
         // overload for multilang support
-        public EndOfMapVote(StringLocalizer localizer, TimeLimitManager timeLimit, MaxRoundsManager maxRounds, PluginState pluginState, GameRules gameRules, EndMapVoteManager voteManager)
+        public EndOfMapVote(StringLocalizer localizer, TimeLimitManager timeLimit, MaxRoundsManager maxRounds, PluginState pluginState, GameRules gameRules, EndMapVoteManager voteManager, MapLister mapLister)
         {
             _localizer = localizer;
             _timeLimit = timeLimit;
@@ -32,8 +34,9 @@ namespace cs2_rockthevote
             _pluginState = pluginState;
             _gameRules = gameRules;
             _voteManager = voteManager;
+            _mapLister = mapLister;
         }
-        public EndOfMapVote(TimeLimitManager timeLimit, MaxRoundsManager maxRounds, PluginState pluginState, GameRules gameRules, EndMapVoteManager voteManager)
+        public EndOfMapVote(TimeLimitManager timeLimit, MaxRoundsManager maxRounds, PluginState pluginState, GameRules gameRules, EndMapVoteManager voteManager, MapLister mapLister)
         {
             //_localizer = new StringLocalizer();
             _timeLimit = timeLimit;
@@ -41,6 +44,7 @@ namespace cs2_rockthevote
             _pluginState = pluginState;
             _gameRules = gameRules;
             _voteManager = voteManager;
+            _mapLister = mapLister;
         }
 
         bool CheckMaxRounds()
@@ -127,6 +131,36 @@ namespace cs2_rockthevote
                 MaybeStartTimer();
                 return HookResult.Continue;
             });
+<<<<<<< Updated upstream
+=======
+
+            plugin.RegisterEventHandler<EventCsWinPanelMatch>((ev, info) =>
+            {
+#if DEBUG
+                plugin?.Logger.LogInformation("WinPanelMatch active. Ending voting so nextlevel wont not be null.");
+#endif
+                _voteManager.timeLeft = -1; // This ends if voting is still going.
+
+#if DEBUG
+                plugin?.Logger.LogInformation("Checking if it is a workshop map not from collection");
+#endif
+
+                plugin?.AddTimer(1.0f, () =>
+                {
+                    Map mapInfo = _mapLister.Maps!.FirstOrDefault(x => x.Name == _voteManager.winner.Key!)!;
+                    if (mapInfo.Id is not null)
+                    {
+#if DEBUG
+                        plugin?.Logger.LogInformation("Map not from collection. Executing host_workshop_map before being brokey!");
+#endif
+                        Server.ExecuteCommand($"host_workshop_map {mapInfo.Id}");
+                    }
+                });
+                return HookResult.Continue;
+            }, HookMode.Pre);
+
+
+>>>>>>> Stashed changes
         }
 
         public void OnConfigParsed(Config config)
