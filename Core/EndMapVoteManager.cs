@@ -114,6 +114,7 @@ namespace cs2_rockthevote
 
         public void MapVoted(CCSPlayerController player, string mapName)
         {
+
             if (_config!.HideHudAfterVote)
                 _voted.Add(player.UserId!.Value);
 
@@ -168,6 +169,7 @@ namespace cs2_rockthevote
                 {
                     Votes[_localizer.Localize("general.extend-current-map")] = 0;
                 }
+
                 menu.AddMenuOption(_localizer.Localize("general.extend-current-map"), (player, option) =>
                 {
                     MapVoted(player, _localizer.Localize("general.extend-current-map"));
