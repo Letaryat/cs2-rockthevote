@@ -173,6 +173,85 @@ namespace cs2_rockthevote
                 return HookResult.Continue;
             }, HookMode.Pre);
 
+            plugin.RegisterEventHandler<EventNextlevelChanged>((e, i) =>
+            {
+                //Map mapInfo = _mapLister.Maps!.FirstOrDefault(x => x.Name == _voteManager.winner.Key!)!;
+#if DEBUG
+                plugin?.Logger.LogInformation($"EventNextLevelChanged: Map is changing from: {Server.MapName} to -> {e.Nextlevel}");
+#endif
+                if (Server.MapName == "" || e.Nextlevel == "")
+                {
+                    Random rnd = new();
+                    var randomMap = _mapLister.Maps!.ElementAt(rnd.Next(0, _mapLister.Maps!.Count()));
+#if DEBUG
+                    plugin?.Logger.LogInformation($"EventNextLevelChanged: Map is empty. Changing to random: {randomMap.Id} | {randomMap.Name}");
+#endif
+
+                    if (Server.IsMapValid(randomMap.Name))
+                    {
+#if DEBUG
+                        plugin?.Logger.LogInformation($"EventNextLevelChanged: Executing changelevel command for {randomMap.Name}");
+#endif
+                        Server.ExecuteCommand($"nextlevel {randomMap.Name}"); // Better to be safe if nextlevel somehow will be still null
+                        Server.ExecuteCommand($"changelevel {randomMap.Name}");
+                    }
+                    else if (randomMap.Id is not null)
+                    {
+#if DEBUG
+                        plugin?.Logger.LogInformation($"EventNextLevelChanged: Executing host_workshop_map command for map ID {randomMap.Id}");
+#endif
+                        //Server.ExecuteCommand($"nextlevel {map.Name}");  // Better to be safe if nextlevel somehow will be still null
+                        Server.ExecuteCommand($"host_workshop_map {randomMap.Id}");
+                    }
+                    else
+                    {
+#if DEBUG
+                        plugin?.Logger.LogInformation($"EventNextLevelChanged: Executing ds_workshop_changelevel command for {randomMap.Name}");
+#endif
+                        Server.ExecuteCommand($"nextlevel {randomMap.Name}");  // Better to be safe if nextlevel somehow will be still null
+                        Server.ExecuteCommand($"ds_workshop_changelevel {randomMap.Name}");
+                    }
+                }
+                return HookResult.Continue;
+            });
+
+            plugin.RegisterEventHandler<EventRoundStart>((e, i) =>
+            {
+                if (Server.MapName == "")
+                {
+                    Random rnd = new();
+                    var randomMap = _mapLister.Maps!.ElementAt(rnd.Next(0, _mapLister.Maps!.Count()));
+#if DEBUG
+                    plugin?.Logger.LogInformation($"EventNextLevelChanged: Map is empty. Changing to random: {randomMap.Id} | {randomMap.Name}");
+#endif
+
+                    if (Server.IsMapValid(randomMap.Name))
+                    {
+#if DEBUG
+                        plugin?.Logger.LogInformation($"EventNextLevelChanged: Executing changelevel command for {randomMap.Name}");
+#endif
+                        Server.ExecuteCommand($"nextlevel {randomMap.Name}"); // Better to be safe if nextlevel somehow will be still null
+                        Server.ExecuteCommand($"changelevel {randomMap.Name}");
+                    }
+                    else if (randomMap.Id is not null)
+                    {
+#if DEBUG
+                        plugin?.Logger.LogInformation($"EventNextLevelChanged: Executing host_workshop_map command for map ID {randomMap.Id}");
+#endif
+                        //Server.ExecuteCommand($"nextlevel {map.Name}");  // Better to be safe if nextlevel somehow will be still null
+                        Server.ExecuteCommand($"host_workshop_map {randomMap.Id}");
+                    }
+                    else
+                    {
+#if DEBUG
+                        plugin?.Logger.LogInformation($"EventNextLevelChanged: Executing ds_workshop_changelevel command for {randomMap.Name}");
+#endif
+                        Server.ExecuteCommand($"nextlevel {randomMap.Name}");  // Better to be safe if nextlevel somehow will be still null
+                        Server.ExecuteCommand($"ds_workshop_changelevel {randomMap.Name}");
+                    }
+                }
+                return HookResult.Continue;
+            });
 
         }
 
