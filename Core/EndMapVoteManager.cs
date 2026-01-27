@@ -327,7 +327,22 @@ namespace cs2_rockthevote
                     _changeMapManager.ScheduleMapChange(winner.Key, mapEnd: mapEnd);
                     _votemapConfig.Enabled = false;
                     if (_config != null && _config.ChangeMapImmediately)
-                        _changeMapManager.ChangeNextMap(mapEnd);
+                    {
+
+                        if(_plugin!.Config.EndOfMapVote.ForceEventCSWinPanelMatch)
+                        {
+                            new EventCsWinPanelMatch(true).FireEvent(false);
+                            _plugin.AddTimer(5.0f, () =>
+                            {
+                               _changeMapManager.ChangeNextMap(mapEnd);    
+                            });
+                        }
+                        else
+                        {
+                            _changeMapManager.ChangeNextMap(mapEnd);   
+                        }
+                        
+                    }
                     else
                     {
                         if (!mapEnd)

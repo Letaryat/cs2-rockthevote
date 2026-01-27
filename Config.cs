@@ -59,6 +59,7 @@ namespace cs2_rockthevote
         public int ExtendLimit { get; set; } = 3;
         public bool PauseMatchWhenVote { get; set; } = false;
         public bool ForceChangeOnWinPanelMatch { get; set; } = false;
+        public bool ForceEventCSWinPanelMatch {get; set; } = false;
     }
 
     public class RtvConfig : ICommandConfig, IVoteConfig, IEndOfMapConfig, IExtendMapConfig
