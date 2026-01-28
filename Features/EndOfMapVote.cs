@@ -195,15 +195,7 @@ namespace cs2_rockthevote
                     plugin?.Logger.LogInformation($"EventNextLevelChanged: Map is empty. Changing to random: {randomMap.Id} | {randomMap.Name}");
 #endif
 
-                    if (Server.IsMapValid(randomMap.Name))
-                    {
-#if DEBUG
-                        plugin?.Logger.LogInformation($"EventNextLevelChanged: Executing changelevel command for {randomMap.Name}");
-#endif
-                        Server.ExecuteCommand($"nextlevel {randomMap.Name}"); // Better to be safe if nextlevel somehow will be still null
-                        Server.ExecuteCommand($"changelevel {randomMap.Name}");
-                    }
-                    else if (randomMap.Id is not null)
+                    if (randomMap.Id is not null)
                     {
 #if DEBUG
                         plugin?.Logger.LogInformation($"EventNextLevelChanged: Executing host_workshop_map command for map ID {randomMap.Id}");
@@ -230,21 +222,12 @@ namespace cs2_rockthevote
                     Random rnd = new();
                     var randomMap = _mapLister.Maps!.ElementAt(rnd.Next(0, _mapLister.Maps!.Count()));
 #if DEBUG
-                    plugin?.Logger.LogInformation($"EventNextLevelChanged: Map is empty. Changing to random: {randomMap.Id} | {randomMap.Name}");
+                    plugin?.Logger.LogInformation($"EventRoundStart: Map is empty. Changing to random: {randomMap.Id} | {randomMap.Name}");
 #endif
-
-                    if (Server.IsMapValid(randomMap.Name))
+                    if (randomMap.Id is not null)
                     {
 #if DEBUG
-                        plugin?.Logger.LogInformation($"EventNextLevelChanged: Executing changelevel command for {randomMap.Name}");
-#endif
-                        Server.ExecuteCommand($"nextlevel {randomMap.Name}"); // Better to be safe if nextlevel somehow will be still null
-                        Server.ExecuteCommand($"changelevel {randomMap.Name}");
-                    }
-                    else if (randomMap.Id is not null)
-                    {
-#if DEBUG
-                        plugin?.Logger.LogInformation($"EventNextLevelChanged: Executing host_workshop_map command for map ID {randomMap.Id}");
+                        plugin?.Logger.LogInformation($"EventRoundStart: Executing host_workshop_map command for map ID {randomMap.Id}");
 #endif
                         //Server.ExecuteCommand($"nextlevel {map.Name}");  // Better to be safe if nextlevel somehow will be still null
                         Server.ExecuteCommand($"host_workshop_map {randomMap.Id}");
@@ -252,7 +235,7 @@ namespace cs2_rockthevote
                     else
                     {
 #if DEBUG
-                        plugin?.Logger.LogInformation($"EventNextLevelChanged: Executing ds_workshop_changelevel command for {randomMap.Name}");
+                        plugin?.Logger.LogInformation($"EventRoundStart: Executing ds_workshop_changelevel command for {randomMap.Name}");
 #endif
                         Server.ExecuteCommand($"nextlevel {randomMap.Name}");  // Better to be safe if nextlevel somehow will be still null
                         Server.ExecuteCommand($"ds_workshop_changelevel {randomMap.Name}");

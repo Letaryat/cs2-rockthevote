@@ -25,12 +25,12 @@ namespace cs2_rockthevote
     {
         public override string ModuleName => "RockTheVote";
 #if DEBUG
-        public override string ModuleVersion => "1.9.7 (DEBUG)";
+        public override string ModuleVersion => "1.9.7.1 (DEBUG)";
 #endif
 #if RELEASE
         public override string ModuleVersion => "1.9.7 (RELEASE)";
 #endif
-        public override string ModuleAuthor => "abnerfs, Oz-Lin, Letaryat";
+        public override string ModuleAuthor => "abnerfs, Oz-Lin, Letaryat (workshopOnly)";
         public override string ModuleDescription => "https://github.com/oz-lin/cs2-rockthevote | This version is from: https://github.com/Letaryat/cs2-rockthevote/tree/let-dev";
 
         private readonly DependencyManager<Plugin, Config> _dependencyManager;
