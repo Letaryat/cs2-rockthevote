@@ -144,27 +144,32 @@ namespace cs2_rockthevote
 #endif
                 _voteManager.timeLeft = -1; // This ends if voting is still going.
 
-
                 plugin?.AddTimer(1.0f, () =>
                 {
                     Map mapInfo = _mapLister.Maps!.FirstOrDefault(x => x.Name == _voteManager.winner.Key!)!;
+
+                    if(mapInfo == null)
+                    {
+                        mapInfo = _mapLister.Maps![0];
+                    }
+
                     if (_config.ForceChangeOnWinPanelMatch)
                     {
 #if DEBUG
-                        plugin?.Logger.LogInformation("ForceChangeOnWinPanelMatch = True. Changing map.");
+                        plugin?.Logger.LogInformation($"ForceChangeOnWinPanelMatch = True. Changing map. {mapInfo}");
 #endif
                         _changeMapManager.ChangeNextMap();
                     }
                     else
                     {
 #if DEBUG
-                        plugin?.Logger.LogInformation("Checking if it is a workshop map not from collection");
+                        plugin?.Logger.LogInformation($"Checking if it is a workshop map not from collection {mapInfo}");
 #endif
 
                         if (mapInfo.Id is not null)
                         {
 #if DEBUG
-                            plugin?.Logger.LogInformation("Map not from collection. Executing host_workshop_map before being brokey!");
+                            plugin?.Logger.LogInformation($"Map not from collection. Executing host_workshop_map before being brokey! {mapInfo}");
 #endif
                             Server.ExecuteCommand($"host_workshop_map {mapInfo.Id}");
                         }
