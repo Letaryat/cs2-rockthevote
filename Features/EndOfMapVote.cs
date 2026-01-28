@@ -148,28 +148,31 @@ namespace cs2_rockthevote
                 {
                     Map mapInfo = _mapLister.Maps!.FirstOrDefault(x => x.Name == _voteManager.winner.Key!)!;
 
-                    if(mapInfo == null)
+                    if (mapInfo == null)
                     {
                         mapInfo = _mapLister.Maps![0];
+#if DEBUG
+                        plugin?.Logger.LogInformation($"Somehow mapInfo is null. Taking the first one in maplist: {mapInfo.Name}");
+#endif
                     }
 
                     if (_config.ForceChangeOnWinPanelMatch)
                     {
 #if DEBUG
-                        plugin?.Logger.LogInformation($"ForceChangeOnWinPanelMatch = True. Changing map. {mapInfo}");
+                        plugin?.Logger.LogInformation($"ForceChangeOnWinPanelMatch = True. Changing map.");
 #endif
                         _changeMapManager.ChangeNextMap();
                     }
                     else
                     {
 #if DEBUG
-                        plugin?.Logger.LogInformation($"Checking if it is a workshop map not from collection {mapInfo}");
+                        plugin?.Logger.LogInformation($"Checking if it is a workshop map not from collection.");
 #endif
 
                         if (mapInfo.Id is not null)
                         {
 #if DEBUG
-                            plugin?.Logger.LogInformation($"Map not from collection. Executing host_workshop_map before being brokey! {mapInfo}");
+                            plugin?.Logger.LogInformation($"Map not from collection. Executing host_workshop_map before being brokey! ");
 #endif
                             Server.ExecuteCommand($"host_workshop_map {mapInfo.Id}");
                         }
